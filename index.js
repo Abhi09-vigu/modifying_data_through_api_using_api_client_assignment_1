@@ -1,22 +1,25 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const MenuItem = require('./schema');
-
+const dotenv = require("dotenv");
+dotenv.config()
 const app = express();
 app.use(express.json());
+ 
 
-mongoose.connect('mongodb=mongodb+srv://root:root@cluster0.aca27.mongodb.net/demo?retryWrites=true&w=majority&app=Cluster0',{
-
-})
-  .then(() => console.log('Connected to MongoDB Atlas'))
+mongoose.connect(process.env.mongodb) 
+.then(() => console.log('Connected to MongoDB Atlas'))
   .catch((error) => console.error('Error connecting to MongoDB Atlas:', error));
 
+
 app.post('/menu', async (req, res) => {
+ 
   try {
     const newMenuItem = new MenuItem(req.body);
     const savedMenuItem = await newMenuItem.save();
     res.status(201).json({ message: 'Menu item created successfully', data: savedMenuItem });
   } catch (error) {
+    console.log(error)
     res.status(400).json({ message: 'Error creating menu item', error: error.message });
   }
 });
@@ -31,9 +34,4 @@ app.get('/menu', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-
-
-
-
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
